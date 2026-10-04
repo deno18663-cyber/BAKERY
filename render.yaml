@@ -1,0 +1,16 @@
+# Render Blueprint for the Oven & Artisan backend (+ /admin dashboard).
+# Apply via the Render Dashboard: New → Blueprint → point at this repo.
+# After the frontend is live on Vercel, set FRONTEND_URL to its https URL.
+
+services:
+  - type: web
+    name: oven-and-artisan-backend
+    runtime: node
+    rootDir: Backend
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: FRONTEND_URL
+        value: http://localhost:3000

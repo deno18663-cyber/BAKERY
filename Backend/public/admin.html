@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oven &amp; Artisan — Orders</title>
+<style>
+  :root { --cream:#FDFBF7; --vanilla:#F5EEDF; --espresso:#2B1D16; --golden:#E09F3E; --terra:#9E2A2B; --sage:#6A7B5B; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: ui-sans-serif, system-ui, "Segoe UI", sans-serif; background:var(--cream); color:var(--espresso); }
+  header { background:var(--espresso); color:var(--cream); padding:20px 28px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  header h1 { font-size:22px; margin:0; }
+  header .dot { width:10px; height:10px; border-radius:50%; background:#7FB069; box-shadow:0 0 8px #7FB069; }
+  header button { margin-left:auto; background:var(--golden); border:0; border-radius:999px; padding:9px 20px; font-weight:700; cursor:pointer; }
+  main { max-width:900px; margin:0 auto; padding:24px 16px 60px; }
+  .stats { display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .stat { flex:1; min-width:140px; background:var(--vanilla); border:1px solid #2b1d1615; border-radius:14px; padding:12px 16px; }
+  .stat b { display:block; font-size:24px; }
+  .stat span { font-size:12px; opacity:.6; }
+  .filters { display:flex; gap:8px; margin:4px 0 16px; flex-wrap:wrap; }
+  .filters button { border:1px solid #2b1d1625; background:#fff; border-radius:999px; padding:7px 16px; cursor:pointer; font-size:13px; font-weight:600; }
+  .filters button.on { background:var(--espresso); color:var(--cream); }
+  .order { background:#fff; border:1px solid #2b1d1615; border-radius:16px; padding:16px 18px; margin-bottom:12px; }
+  .order-top { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .order-top code { font-size:12px; background:var(--vanilla); padding:3px 8px; border-radius:6px; }
+  .order-top time { font-size:12px; opacity:.55; }
+  .pill { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; border-radius:999px; padding:4px 12px; }
+  .pending { background:#E09F3E22; color:#9a6b1c; } .ready { background:#6a7b5b22; color:var(--sage); }
+  .completed { background:#2b1d1612; color:var(--espresso); } .cancelled { background:#9e2a2b18; color:var(--terra); }
+  .lines { margin:10px 0 4px; font-size:14px; }
+  .lines div { padding:3px 0; }
+  .order-bot { display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .total { font-weight:800; font-size:18px; margin-right:auto; }
+  .order-bot button { border:1px solid #2b1d1625; background:var(--cream); border-radius:999px; padding:6px 14px; cursor:pointer; font-size:12px; font-weight:700; }
+  .order-bot button:hover { border-color:var(--espresso); }
+  .empty { text-align:center; opacity:.55; padding:60px 0; }
+  .err { background:#9e2a2b14; border:1px solid #9e2a2b44; color:var(--terra); border-radius:12px; padding:12px 16px; margin-bottom:12px; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <span class="dot"></span>
+  <h1>🥐 Oven &amp; Artisan — Orders</h1>
+  <button onclick="load()">↻ Refresh</button>
+</header>
+<main>
+  <div id="err"></div>
+  <div class="stats">
+    <div class="stat"><b id="s-pending">–</b><span>awaiting</span></div>
+    <div class="stat"><b id="s-today">–</b><span>orders today</span></div>
+    <div class="stat"><b id="s-revenue">–</b><span>revenue (excl. cancelled)</span></div>
+  </div>
+  <div class="filters" id="filters">
+    <button data-f="all" class="on">All</button>
+    <button data-f="pending">Pending</button>
+    <button data-f="ready">Ready</button>
+    <button data-f="completed">Completed</button>
+    <button data-f="cancelled">Cancelled</button>
+  </div>
+  <div id="list"></div>
+</main>
+<script>
+let filter = "all";
+let orders = [];
+document.getElementById("filters").addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  filter = b.dataset.f;
+  document.querySelectorAll("#filters button").forEach((x) => x.classList.toggle("on", x === b));
+  render();
+});
+async function load() {
+  const err = document.getElementById("err");
+  err.innerHTML = "";
+  try {
+    const r = await fetch("/api/orders?limit=100");
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const d = await r.json();
+    orders = d.orders || [];
+    render();
+  } catch (e) {
+    err.innerHTML = `<div class="err">Couldn't reach the API (${e.message}). Is the backend running?</div>`;
+  }
+}
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function render() {
+  const list = document.getElementById("list");
+  const shown = orders.filter((o) => filter === "all" || o.status === filter);
+  const today = new Date().toDateString();
+  const todays = orders.filter((o) => new Date(o.createdAt).toDateString() === today);
+  document.getElementById("s-pending").textContent = orders.filter((o) => o.status === "pending").length;
+  document.getElementById("s-today").textContent = todays.length;
+  document.getElementById("s-revenue").textContent =
+    "$" + todays.filter((o) => o.status !== "cancelled").reduce((s, o) => s + o.total, 0).toFixed(2);
+  if (!shown.length) { list.innerHTML = `<div class="empty">No ${filter === "all" ? "" : filter + " "}orders yet.<br>New checkouts from the site appear here automatically.</div>`; return; }
+  list.innerHTML = shown.map((o) => `
+    <div class="order">
+      <div class="order-top">
+        <code>${esc(o.id)}</code>
+        <span class="pill ${esc(o.status)}">${esc(o.status)}</span>
+        <time>${esc(new Date(o.createdAt).toLocaleString())} · ${esc(o.customer?.name || "Walk-in")}</time>
+      </div>
+      <div class="lines">${o.lines.map((l) => `<div>${esc(l.emoji || "🍞")} ${esc(l.name)} × ${l.qty} — $${l.lineTotal.toFixed(2)}${l.options ? `<br><small style="opacity:.55">${esc(l.options)}</small>` : ""}</div>`).join("")}</div>
+      <div class="order-bot">
+        <span class="total">$${o.total.toFixed(2)}</span>
+        ${["pending","ready","completed","cancelled"].filter((s) => s !== o.status).map((s) => `<button onclick="setStatus('${esc(o.id)}','${s}')">→ ${s}</button>`).join("")}
+      </div>
+    </div>`).join("");
+}
+async function setStatus(id, status) {
+  await fetch(`/api/orders/${encodeURIComponent(id)}/status`, {
+    method: "PATCH", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ status }),
+  });
+  load();
+}
+load();
+setInterval(load, 15000);
+</script>
+</body>
+</html>

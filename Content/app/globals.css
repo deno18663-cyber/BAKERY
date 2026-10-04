@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Brand palette ─────────────────────────────── */
+  --color-cream: #fdfbf7;
+  --color-espresso: #1a1615;
+  --color-golden: #e09f3e;
+  --color-terracotta: #9e2a2b;
+  --color-cinnamon: #540b0e;
+  --color-sage: #889681;
+  --color-vanilla: #fff8f0;
+
+  /* ── Shadows ───────────────────────────────────── */
+  --shadow-soft: 0 10px 40px -12px rgb(26 22 21 / 0.25);
+  --shadow-golden: 0 8px 30px -8px rgb(224 159 62 / 0.45);
+  --shadow-card: 0 2px 24px -8px rgb(26 22 21 / 0.14);
+
+  /* ── Animations ────────────────────────────────── */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-steam: steam 4s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes steam {
+    0% {
+      opacity: 0;
+      transform: translateY(0) scale(0.6);
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-60px) scale(1.2);
+    }
+  }
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+}
+
+/* Fonts are applied as runtime CSS vars by next/font — resolve utilities at use time. */
+@theme inline {
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-playfair);
+}
+
+@layer base {
+  html {
+    scroll-behavior: auto; /* Lenis owns the wheel */
+  }
+  body {
+    @apply bg-transparent font-sans text-espresso antialiased;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+  ::selection {
+    background: var(--color-golden);
+    color: var(--color-espresso);
+  }
+  button {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-golden);
+    outline-offset: 2px;
+  }
+}
+
+/* Hide scrollbars on carousels / marquees */
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
