@@ -45,6 +45,11 @@
 </header>
 <main>
   <div id="err"></div>
+  <div id="locked" style="display:none;text-align:center;padding:40px 0;">
+    <div style="font-size:48px;">🔒</div>
+    <p>Session expired or key changed. <a href="/admin">Unlock again</a></p>
+  </div>
+  <div id="board">
   <div class="stats">
     <div class="stat"><b id="s-pending">–</b><span>awaiting</span></div>
     <div class="stat"><b id="s-today">–</b><span>orders today</span></div>
@@ -58,8 +63,24 @@
     <button data-f="cancelled">Cancelled</button>
   </div>
   <div id="list"></div>
+  </div>
 </main>
 <script>
+// Key arrives once via ?key= (server-gated), then lives in sessionStorage
+// and is sent as a header — never left visible in the URL bar.
+const params = new URLSearchParams(location.search);
+const urlKey = params.get("key");
+if (urlKey) {
+  sessionStorage.setItem("oa-admin-key", urlKey);
+  history.replaceState(null, "", "/admin");
+}
+function adminHeaders() {
+  return { "x-admin-key": sessionStorage.getItem("oa-admin-key") || "" };
+}
+function locked() {
+  document.getElementById("board").style.display = "none";
+  document.getElementById("locked").style.display = "block";
+}
 let filter = "all";
 let orders = [];
 document.getElementById("filters").addEventListener("click", (e) => {
@@ -73,7 +94,8 @@ async function load() {
   const err = document.getElementById("err");
   err.innerHTML = "";
   try {
-    const r = await fetch("/api/orders?limit=100");
+    const r = await fetch("/api/orders?limit=100", { headers: adminHeaders() });
+    if (r.status === 401) { locked(); return; }
     if (!r.ok) throw new Error("HTTP " + r.status);
     const d = await r.json();
     orders = d.orders || [];
@@ -108,9 +130,11 @@ function render() {
     </div>`).join("");
 }
 async function setStatus(id, status) {
-  await fetch(`/api/orders/${encodeURIComponent(id)}/status`, {
-    method: "PATCH", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ status }),
+  const r = await fetch(`/api/orders/${encodeURIComponent(id)}/status`, {
+    method: "PATCH", headers: { "Content-Type": "application/json", ...adminHeaders() },
+    body: JSON.stringify({ status }),
   });
+  if (r.status === 401) { locked(); return; }
   load();
 }
 load();

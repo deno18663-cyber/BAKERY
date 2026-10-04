@@ -3,11 +3,12 @@
 /**
  * Newsletter ("the proofing list"): subscribe + admin listing.
  *   POST /api/newsletter   { email }
- *   GET  /api/newsletter   (count + emails; protect this in production)
+ *   GET  /api/newsletter   (staff-only subscriber list)
  */
 
 const express = require("express");
 const db = require("../db");
+const adminAuth = require("../admin-auth");
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.post("/", async (req, res) => {
   res.status(201).json({ ok: true, message: "You're on the list. Welcome in." });
 });
 
-router.get("/", (req, res) => {
+router.get("/", adminAuth, (req, res) => {
   const { subscribers } = db.get();
   res.json({ count: subscribers.length, subscribers });
 });

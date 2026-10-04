@@ -11,6 +11,7 @@
 
 const express = require("express");
 const db = require("../db");
+const adminAuth = require("../admin-auth");
 
 const router = express.Router();
 
@@ -195,7 +196,9 @@ router.post("/custom", async (req, res) => {
 });
 
 // ── List / fetch / update status ──────────────────────────
-router.get("/", (req, res) => {
+// Listing + status changes are staff-only. Single-order lookup stays
+// public (ids are unguessable) so customers could track their own order.
+router.get("/", adminAuth, (req, res) => {
   const { orders } = db.get();
   const limit = Math.min(Math.max(parseInt(req.query.limit || "20", 10) || 20, 1), 100);
   res.json({ count: orders.length, orders: orders.slice(0, limit) });
@@ -208,7 +211,7 @@ router.get("/:id", (req, res) => {
   res.json(order);
 });
 
-router.patch("/:id/status", async (req, res) => {
+router.patch("/:id/status", adminAuth, async (req, res) => {
   const { status } = req.body || {};
   if (!VALID_STATUSES.includes(status)) {
     return res.status(400).json({ error: `status must be one of: ${VALID_STATUSES.join(", ")}` });

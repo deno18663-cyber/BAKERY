@@ -49,8 +49,27 @@ app.get("/api/health", (req, res) => {
 });
 
 // Staff order dashboard (reads /api/orders, updates status via PATCH).
+// Gated by ADMIN_KEY (?key=...). API data routes enforce it too.
 app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "admin.html"));
+  const expected = process.env.ADMIN_KEY;
+  if (expected && req.query.key === expected) {
+    return res.sendFile(path.join(__dirname, "..", "public", "admin.html"));
+  }
+  const wrong = req.query.key !== undefined;
+  res.status(401).send(`<!doctype html><html><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Restricted — Oven &amp; Artisan</title></head>
+<body style="margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;background:#FDFBF7;font-family:system-ui,sans-serif;">
+<main style="text-align:center;padding:32px;">
+<div style="font-size:48px;">🔒</div>
+<h1 style="color:#2B1D16;">Staff only</h1>
+<p style="color:#2b1d1699;">${wrong ? "That key was not recognised. Try again." : "Enter the admin key to view orders."}</p>
+${expected ? "" : "<p style='color:#9E2A2B;'>Server misconfigured: ADMIN_KEY is not set.</p>"}
+<form onsubmit="location='/admin?key='+encodeURIComponent(this.key.value);return false;">
+<input name="key" type="password" placeholder="Admin key" autocomplete="off"
+style="padding:10px 18px;border-radius:999px;border:1px solid #2b1d1633;font-size:15px;width:260px;"/>
+<button style="padding:10px 22px;border-radius:999px;border:0;background:#E09F3E;font-weight:700;cursor:pointer;">Unlock</button>
+</form></main></body></html>`);
 });
 
 app.use("/api/products", productsRouter);

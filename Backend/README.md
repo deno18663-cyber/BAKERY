@@ -83,11 +83,16 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 then `fetch(\`${process.env.NEXT_PUBLIC_API_URL}/api/products\`)` from any client component.
 Suggested swaps: `CartDrawer` checkout → `POST /api/orders`, newsletter form → `POST /api/newsletter`, `ReviewsCarousel` → `GET /api/reviews`, bake schedule → `GET /api/store-info/schedule`.
 
-## Staff order dashboard
+## Staff order dashboard (locked)
 
-Open `http://localhost:4000/admin` in a browser — every checkout from the
-site appears there within seconds, with status buttons
-(`pending → ready → completed`, or cancel) and today's revenue.
+Open `http://localhost:4000/admin` in a browser — you'll get a key prompt.
+The key is `ADMIN_KEY` from `.env` (see `.env.example`). Bookmark
+`http://localhost:4000/admin?key=YOUR_KEY`, or type it each visit.
+
+Protected (need the key): the dashboard page, order listing, order status
+changes, subscriber list. Public (customers need these): checkout, menu /
+products, reviews, newsletter signup, store info. To rotate a leaked key,
+change `ADMIN_KEY` and restart (Render: change the env var, it redeploys).
 
 ## Deploy for free (Render + Vercel)
 
@@ -102,6 +107,10 @@ Backend (this folder) → **Render** · Frontend (`../Content`) → **Vercel**.
 4. Back in Render → service → Environment → set
    `FRONTEND_URL=https://<your-site>.vercel.app` (allows the live site
    through CORS). It redeploys automatically.
+5. In the same Environment screen add `ADMIN_KEY` = a long random string
+   (generate: `node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"`).
+   Without it the dashboard refuses to serve. Open
+   `https://<your-service>.onrender.com/admin` and unlock with that key.
 
 > ⚠️ Render's free tier sleeps after inactivity (first request takes ~1 min
 > to wake) and its disk is **ephemeral** — orders reset when the service
