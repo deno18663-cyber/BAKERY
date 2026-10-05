@@ -7,6 +7,7 @@ import CustomCursor from "@/components/cursor/CustomCursor";
 import CartDrawer from "@/components/ui/CartDrawer";
 import CapabilitiesProvider from "@/components/providers/CapabilitiesProvider";
 import BakeryProvider from "@/components/providers/BakeryProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({
         <Header />
         <CartDrawer />
         <main className="relative z-20">{children}</main>
+        <Analytics />
       </body>
     </html>
   );
