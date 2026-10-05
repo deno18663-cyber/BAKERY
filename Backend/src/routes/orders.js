@@ -42,6 +42,9 @@ function validateItems(catalog, items) {
   if (!Array.isArray(items) || items.length === 0) {
     return { error: "items must be a non-empty array of { id, qty }" };
   }
+  if (items.length > 50) {
+    return { error: "Too many lines: max 50 items per order." };
+  }
   const lines = [];
   for (const raw of items) {
     const id = raw && raw.id;
@@ -70,7 +73,6 @@ function validateItems(catalog, items) {
 // ── Create a standard order ───────────────────────────────
 router.post("/", async (req, res) => {
   const { items, customer = {}, note } = req.body || {};
-  const name = typeof customer.name === "string" ? customer.name.trim() : "";
 
   const order = await db.update((database) => {
     const catalog = priceMap(database);
@@ -90,7 +92,7 @@ router.post("/", async (req, res) => {
       total: subtotal,
       currency: "USD",
       customer: {
-        name,
+        name: typeof customer.name === "string" ? customer.name.trim().slice(0, 80) : "",
         phone: typeof customer.phone === "string" ? customer.phone.slice(0, 40) : undefined,
       },
       note: typeof note === "string" ? note.slice(0, 500) : undefined,
@@ -113,6 +115,9 @@ router.post("/custom", async (req, res) => {
   const { kind, customer = {}, message } = body;
   if (kind !== "cake" && kind !== "box") {
     return res.status(400).json({ error: "kind must be 'cake' or 'box'" });
+  }
+  if (customer && typeof customer.name === "string" && customer.name.length > 80) {
+    return res.status(400).json({ error: "customer name is too long (max 80 chars)." });
   }
 
   const order = await db.update((database) => {

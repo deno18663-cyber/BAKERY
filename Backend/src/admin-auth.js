@@ -8,6 +8,16 @@
  * stay public.
  */
 
+const crypto = require("crypto");
+
+/** Constant-time comparison so key bytes can't be probed one by one. */
+function keyMatches(provided, expected) {
+  const a = Buffer.from(String(provided));
+  const b = Buffer.from(String(expected));
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
+
 function adminAuth(req, res, next) {
   const expected = process.env.ADMIN_KEY;
   if (!expected) {
@@ -16,10 +26,11 @@ function adminAuth(req, res, next) {
       .json({ error: "ADMIN_KEY is not configured on the server." });
   }
   const provided = req.headers["x-admin-key"] || req.query.key;
-  if (typeof provided !== "string" || provided !== expected) {
+  if (typeof provided !== "string" || !keyMatches(provided, expected)) {
     return res.status(401).json({ error: "Unauthorized: valid admin key required." });
   }
   next();
 }
 
 module.exports = adminAuth;
+module.exports.keyMatches = keyMatches;

@@ -54,7 +54,7 @@ export default function CartDrawer() {
     } catch (err) {
       setError(
         err instanceof Error
-          ? `${err.message} — is the backend running? (double-click Backend/open-backend.bat, then retry)`
+          ? `${err.message} — couldn't reach the bakery server. Please retry in a moment.`
           : "Checkout failed. Please retry.",
       );
     } finally {

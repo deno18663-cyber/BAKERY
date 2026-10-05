@@ -27,6 +27,9 @@ const cors = require("cors");
 const path = require("path");
 
 const db = require("./db");
+const adminAuth = require("./admin-auth");
+const { keyMatches } = adminAuth;
+const { securityHeaders, adminPageCsp, rateLimit } = require("./security");
 const { productsRouter, menuRouter, customizerRouter } = require("./routes/products");
 const ordersRouter = require("./routes/orders");
 const reviewsRouter = require("./routes/reviews");
@@ -38,8 +41,28 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 const app = express();
 
+// Behind Render's proxy (and only one trusted hop) so req.ip is the
+// real client — the rate limiter depends on this.
+app.set("trust proxy", 1);
+app.disable("x-powered-by");
+
 app.use(cors({ origin: FRONTEND_URL.split(",").map((s) => s.trim()), maxAge: 86400 }));
 app.use(express.json({ limit: "256kb" }));
+app.use(securityHeaders);
+
+// Shared limiter instances (one memory per rule — never per request).
+const apiLimiter = rateLimit({ windowMs: 60_000, max: 300 });
+const writeLimiter = rateLimit({ windowMs: 60_000, max: 30 });
+const adminPageLimiter = rateLimit({ windowMs: 60_000, max: 60 });
+
+// Gentle global ceiling; writes + /admin get stricter limits below.
+app.use("/api", apiLimiter);
+app.use((req, res, next) => {
+  if (req.method === "POST" || req.method === "PATCH") {
+    return writeLimiter(req, res, next);
+  }
+  next();
+});
 
 // Ensure data/db.json exists (seeded) before serving anything.
 db.get();
@@ -50,9 +73,9 @@ app.get("/api/health", (req, res) => {
 
 // Staff order dashboard (reads /api/orders, updates status via PATCH).
 // Gated by ADMIN_KEY (?key=...). API data routes enforce it too.
-app.get("/admin", (req, res) => {
+app.get("/admin", adminPageLimiter, adminPageCsp, (req, res) => {
   const expected = process.env.ADMIN_KEY;
-  if (expected && req.query.key === expected) {
+  if (expected && typeof req.query.key === "string" && keyMatches(req.query.key, expected)) {
     return res.sendFile(path.join(__dirname, "..", "public", "admin.html"));
   }
   const wrong = req.query.key !== undefined;
@@ -92,7 +115,12 @@ app.use("/api", (req, res) => {
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(err.status || 500).json({ error: err.message || "Internal server error" });
+  // Validation errors (err.status) are safe to explain; anything else
+  // becomes a generic 500 so internals (fs paths, stack traces) never leak.
+  if (err.status) {
+    return res.status(err.status).json({ error: err.message || "Bad request" });
+  }
+  res.status(500).json({ error: "Internal server error" });
 });
 
 if (require.main === module) {
