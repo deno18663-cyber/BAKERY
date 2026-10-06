@@ -19,9 +19,12 @@ function securityHeaders(req, res, next) {
 }
 
 function adminPageCsp(req, res, next) {
+  // connect-src 'self' is required: the dashboard fetches its own /api/*
+  // from the same origin. Without it the browser blocks those calls and
+  // the page shows "Failed to fetch" even though the API is healthy.
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'deny'",
+    "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; frame-ancestors 'deny'",
   );
   next();
 }
