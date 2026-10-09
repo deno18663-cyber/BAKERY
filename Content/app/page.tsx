@@ -7,6 +7,7 @@ import MenuGrid from "@/components/sections/MenuGrid";
 import BuildCustomizer from "@/components/sections/BuildCustomizer";
 import BakeSchedule from "@/components/sections/BakeSchedule";
 import ReviewsCarousel from "@/components/sections/ReviewsCarousel";
+import Faq from "@/components/sections/Faq";
 import StoreLocator from "@/components/sections/StoreLocator";
 import Footer from "@/components/footer/Footer";
 
@@ -22,6 +23,7 @@ export default function Home() {
       <BuildCustomizer />
       <BakeSchedule />
       <ReviewsCarousel />
+      <Faq />
       <StoreLocator />
       <Footer />
     </>

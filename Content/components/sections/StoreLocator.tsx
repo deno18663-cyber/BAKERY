@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2, MapPin, Navigation, Phone } from "lucide-react";
 import { HOURS, STORE } from "@/lib/content";
@@ -65,6 +66,7 @@ function MapArt() {
 
 export default function StoreLocator() {
   const [email, setEmail] = useState("");
+  const [company, setCompany] = useState(""); // honeypot — humans never fill this
   const [submitted, setSubmitted] = useState(false);
   const [welcome, setWelcome] = useState("You’re on the list. Welcome in.");
   const [joining, setJoining] = useState(false);
@@ -80,7 +82,8 @@ export default function StoreLocator() {
     setJoining(true);
     try {
       // Persist via the backend; fall back to local-only when it's offline.
-      const res = await subscribeNewsletter(email.trim());
+      // The honeypot field is sent along — bots that fill it are silently ignored.
+      const res = await subscribeNewsletter(email.trim(), company);
       setWelcome(res.message);
     } catch {
       setWelcome("You’re on the list. Welcome in.");
@@ -145,7 +148,10 @@ export default function StoreLocator() {
           <Reveal delay={0.26} className="mt-10 rounded-3xl border border-espresso/10 bg-vanilla p-6">
             <h3 className="font-display text-xl text-espresso">The proofing list</h3>
             <p className="mt-1 text-sm text-espresso/60">
-              One email a week: what&rsquo;s baking, what&rsquo;s seasonal, and first dibs on custom orders.
+              One email a week: what&rsquo;s baking, what&rsquo;s seasonal, and first dibs on custom orders.{" "}
+              <Link href="/privacy" className="underline decoration-golden/60 underline-offset-2 hover:text-terracotta">
+                Privacy-respecting, always.
+              </Link>
             </p>
             {submitted ? (
               <motion.p
@@ -171,6 +177,17 @@ export default function StoreLocator() {
                   placeholder="you@example.com"
                   aria-label="Email address"
                   className="flex-1 rounded-full border border-espresso/15 bg-cream px-5 py-3 text-sm outline-none transition-colors focus:border-golden"
+                />
+                {/* honeypot: invisible to humans, irresistible to bots */}
+                <input
+                  type="text"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="Company"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="absolute -left-[9999px] h-px w-px opacity-0"
                 />
                 <button
                   type="submit"

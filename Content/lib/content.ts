@@ -25,6 +25,7 @@ export const NAV_LINKS: NavLink[] = [
   { id: "customizer", label: "Build a Box" },
   { id: "schedule", label: "Fresh Now" },
   { id: "reviews", label: "Reviews" },
+  { id: "faq", label: "FAQ" },
   { id: "visit", label: "Visit Us" },
 ];
 

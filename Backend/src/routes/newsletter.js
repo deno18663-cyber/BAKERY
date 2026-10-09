@@ -15,7 +15,11 @@ const router = express.Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 router.post("/", async (req, res) => {
-  const { email } = req.body || {};
+  const { email, company } = req.body || {};
+  // Honeypot: bots fill `company`; pretend success, store nothing.
+  if (typeof company === "string" && company.trim() !== "") {
+    return res.json({ ok: true, message: "You're on the list. Welcome in." });
+  }
   if (typeof email !== "string" || email.length > 254 || !EMAIL_RE.test(email.trim())) {
     return res.status(400).json({ error: "A valid email address is required." });
   }

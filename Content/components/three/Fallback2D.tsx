@@ -564,6 +564,7 @@ export function BoxArt({ className }: { className?: string }) {
               y={cy + 6}
               textAnchor="middle"
               fontSize="17"
+              aria-hidden="true"
               style={{ pointerEvents: "none" }}
             >
               {product.emoji}

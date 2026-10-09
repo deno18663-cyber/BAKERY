@@ -44,7 +44,7 @@ export default function MenuGrid() {
                 : "border border-espresso/12 bg-cream text-espresso/70 hover:border-espresso/30"
             }`}
           >
-            <span>{c.emoji}</span> {c.label}
+            <span aria-hidden="true">{c.emoji}</span> {c.label}
           </button>
         ))}
       </div>
@@ -67,7 +67,7 @@ export default function MenuGrid() {
                 className="cursor-pointer rounded-2xl border border-espresso/10 bg-cream px-5 py-4 shadow-card transition-colors duration-300 hover:border-golden/60"
               >
                 <div className="flex items-center gap-4">
-                  <span className="text-3xl">{m.emoji}</span>
+                  <span className="text-3xl" aria-hidden="true">{m.emoji}</span>
                   <div className="flex-1">
                     <div className="flex items-baseline gap-3">
                       <h3 className="font-display text-lg text-espresso">{m.name}</h3>

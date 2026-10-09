@@ -208,7 +208,7 @@ export default function BuildCustomizer() {
                         used ? "border-golden bg-golden/15 text-espresso" : "border-espresso/12 bg-cream text-espresso/70 hover:border-espresso/35"
                       }`}
                     >
-                      <span className="text-xl">{b.emoji}</span>
+                      <span className="text-xl" aria-hidden="true">{b.emoji}</span>
                       <span className="leading-tight">{b.name}</span>
                       {used && <span className="ml-auto text-golden">✓</span>}
                     </button>

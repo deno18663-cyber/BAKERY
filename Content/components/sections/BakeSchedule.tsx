@@ -117,7 +117,7 @@ export default function BakeSchedule() {
           <Reveal key={item.id} delay={i * 0.06}>
             <article className="group rounded-3xl border border-cream/10 bg-cream/5 p-6 backdrop-blur-sm transition-colors duration-300 hover:border-golden/40">
               <div className="flex items-start justify-between">
-                <span className="text-4xl transition-transform duration-300 group-hover:scale-110">{item.emoji}</span>
+                <span className="text-4xl transition-transform duration-300 group-hover:scale-110" aria-hidden="true">{item.emoji}</span>
                 {mounted ? (
                   <PhaseBadge item={item} now={now} />
                 ) : (

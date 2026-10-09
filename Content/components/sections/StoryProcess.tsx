@@ -12,7 +12,7 @@ function StepCard({ step }: { step: (typeof STORY_STEPS)[number] }) {
       <span className="absolute -right-4 -top-6 font-display text-[7rem] leading-none text-cream/5 transition-colors duration-300 group-hover:text-golden/10">
         {step.number}
       </span>
-      <span className="text-5xl">{step.icon}</span>
+      <span className="text-5xl" aria-hidden="true">{step.icon}</span>
       <p className="mt-5 font-display text-sm text-golden">{step.number}</p>
       <h3 className="mt-1 text-2xl text-cream">{step.title}</h3>
       <p className="mt-3 text-sm leading-relaxed text-cream/70">{step.body}</p>
@@ -75,7 +75,7 @@ export default function StoryProcess() {
             <StepCard key={step.number} step={step} />
           ))}
           <div className="flex w-56 shrink-0 flex-col items-center justify-center gap-4 rounded-3xl border border-golden/40 bg-golden/10 p-8 text-center">
-            <span className="text-5xl">🍞</span>
+            <span className="text-5xl" aria-hidden="true">🍞</span>
             <p className="font-display text-xl text-golden">Ready to eat.</p>
             <p className="text-sm text-cream/70">Fresh out of the oven — see what&rsquo;s baking now below.</p>
           </div>

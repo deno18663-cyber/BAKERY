@@ -63,7 +63,7 @@ export default function SignatureProducts() {
                   {p.badge}
                 </span>
               )}
-              <span className="text-6xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">
+              <span className="text-6xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3" aria-hidden="true">
                 {p.emoji}
               </span>
               <h3 className="mt-4 font-display text-xl text-espresso">{p.name}</h3>

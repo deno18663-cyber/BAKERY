@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowUp, Mail, MapPin, Phone } from "lucide-react";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -132,9 +133,17 @@ export default function Footer() {
       <div className="border-t border-cream/10 px-6 py-6">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs text-cream/40 sm:flex-row">
           <p>© {new Date().getFullYear()} Oven &amp; Artisan. Slow-baked, never mass-produced.</p>
-          {mounted && (
-            <p>Today: {today.open ? `${today.day} · ${today.open.slice(0, 5)}–${today.close!.slice(0, 5)}` : `${today.day} · Closed`}</p>
-          )}
+          <div className="flex items-center gap-5">
+            <Link href="/privacy" className="transition-colors hover:text-cream">
+              Privacy Policy
+            </Link>
+            <Link href="/#faq" className="transition-colors hover:text-cream">
+              FAQ
+            </Link>
+            {mounted && (
+              <p>Today: {today.open ? `${today.day} · ${today.open.slice(0, 5)}–${today.close!.slice(0, 5)}` : `${today.day} · Closed`}</p>
+            )}
+          </div>
         </div>
       </div>
     </footer>

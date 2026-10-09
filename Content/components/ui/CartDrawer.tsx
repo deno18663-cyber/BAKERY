@@ -109,7 +109,7 @@ export default function CartDrawer() {
               </div>
             ) : items.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-                <span className="text-6xl">🥖</span>
+                <span className="text-6xl" aria-hidden="true">🥖</span>
                 <p className="font-display text-xl">Your cart is empty</p>
                 <p className="text-sm text-espresso/50">Add something warm from the bakery.</p>
                 <button
@@ -127,7 +127,7 @@ export default function CartDrawer() {
                       key={item.id}
                       className="flex items-center gap-3 rounded-2xl border border-espresso/10 bg-vanilla p-3"
                     >
-                      <span className="text-3xl">{item.emoji}</span>
+                      <span className="text-3xl" aria-hidden="true">{item.emoji}</span>
                       <div className="flex-1">
                         <p className="font-display text-base leading-tight">{item.name}</p>
                         {item.options && <p className="text-xs text-espresso/50">{item.options}</p>}

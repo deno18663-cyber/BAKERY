@@ -85,10 +85,14 @@ export function fetchReviews(): Promise<ApiReview[]> {
 
 /* ── Newsletter ─────────────────────────────────────────── */
 
-export function subscribeNewsletter(email: string): Promise<{ ok: boolean; message: string }> {
+/**
+ * Newsletter signup. `company` is a honeypot — real users leave it empty;
+ * bots that fill it get a fake success and are never subscribed.
+ */
+export function subscribeNewsletter(email: string, company = ""): Promise<{ ok: boolean; message: string }> {
   return apiFetch("/api/newsletter", {
     method: "POST",
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, company }),
   });
 }
 
