@@ -4,7 +4,6 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/header/Header";
 import SmoothScroll from "@/components/smooth/SmoothScroll";
-import CustomCursor from "@/components/cursor/CustomCursor";
 import CartDrawer from "@/components/ui/CartDrawer";
 import CapabilitiesProvider from "@/components/providers/CapabilitiesProvider";
 import BakeryProvider from "@/components/providers/BakeryProvider";
@@ -97,7 +96,6 @@ export default function RootLayout({
         <SmoothScroll />
         <CapabilitiesProvider />
         <BakeryProvider />
-        <CustomCursor />
         <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-cream" />
         <Header />
         <CartDrawer />
