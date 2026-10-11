@@ -8,7 +8,6 @@ import type { ProductCategory } from "@/lib/types";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { miniConfetti } from "@/lib/confetti";
 import SectionHeading from "@/components/ui/SectionHeading";
-import WarmWash from "@/components/ui/WarmWash";
 
 const CATEGORIES: { key: ProductCategory; label: string; emoji: string }[] = [
   { key: "pastries", label: "Pastries", emoji: "🥐" },
@@ -24,8 +23,7 @@ export default function MenuGrid() {
   const items = MENU.filter((m) => m.category === category);
 
   return (
-    <section id="menu" className="relative bg-vanilla px-6 py-24 lg:px-16">
-      <WarmWash />
+    <section id="menu" className="relative bg-warm-vanilla px-6 py-24 lg:px-16">
       <SectionHeading
         eyebrow="Full menu"
         title={["Everything", "we bake"]}

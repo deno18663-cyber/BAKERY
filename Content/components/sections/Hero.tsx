@@ -7,7 +7,6 @@ import { useCapsStore } from "@/lib/stores/caps-store";
 import SplitHeading from "@/components/ui/SplitHeading";
 import MagneticButton from "@/components/ui/MagneticButton";
 import LiveStatusPill from "@/components/ui/LiveStatusPill";
-import WarmWash from "@/components/ui/WarmWash";
 import { HeroArt, FlourDust } from "@/components/three/Fallback2D";
 import { scrollToTarget } from "@/components/smooth/SmoothScroll";
 
@@ -15,8 +14,7 @@ export default function Hero() {
   const enabled = useCapsStore((s) => s.enabled);
 
   return (
-    <section id="hero" className="relative flex min-h-screen items-center overflow-hidden px-6 pb-24 pt-28 lg:px-16">
-      <WarmWash />
+    <section id="hero" className="relative flex min-h-screen items-center overflow-hidden bg-warm-light px-6 pb-24 pt-28 lg:px-16">
       {!enabled && <FlourDust />}
 
       <div className="relative z-10 max-w-3xl">

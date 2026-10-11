@@ -94,3 +94,35 @@
     display: none;
   }
 }
+
+/* ── Warm section backgrounds ────────────────────────────
+   Antique white (#faebd7) washing the top edge, bisque (#ffe4c4)
+   along the bottom — painted as the section's own background, so
+   nothing can cover them up. `-flip` mirrors the wash. */
+@utility bg-warm-light {
+  background-color: var(--color-cream);
+  background-image:
+    radial-gradient(52rem 26rem at 12% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
+    radial-gradient(46rem 24rem at 88% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+}
+
+@utility bg-warm-light-flip {
+  background-color: var(--color-cream);
+  background-image:
+    radial-gradient(52rem 26rem at 88% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
+    radial-gradient(46rem 24rem at 12% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+}
+
+@utility bg-warm-vanilla {
+  background-color: var(--color-vanilla);
+  background-image:
+    radial-gradient(52rem 26rem at 12% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
+    radial-gradient(46rem 24rem at 88% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+}
+
+@utility bg-warm-vanilla-flip {
+  background-color: var(--color-vanilla);
+  background-image:
+    radial-gradient(52rem 26rem at 88% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
+    radial-gradient(46rem 24rem at 12% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+}

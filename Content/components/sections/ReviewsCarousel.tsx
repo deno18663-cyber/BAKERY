@@ -7,7 +7,6 @@ import { REVIEWS } from "@/lib/content";
 import type { Review } from "@/lib/types";
 import { fetchReviews } from "@/lib/api";
 import SectionHeading from "@/components/ui/SectionHeading";
-import WarmWash from "@/components/ui/WarmWash";
 
 export default function ReviewsCarousel() {
   // Live reviews from the backend, falling back to the static set offline.
@@ -75,8 +74,7 @@ export default function ReviewsCarousel() {
   }, [x, stepWidth, goTo]);
 
   return (
-    <section id="reviews" className="relative bg-vanilla px-6 py-24 lg:px-16">
-      <WarmWash />
+    <section id="reviews" className="relative bg-warm-vanilla-flip px-6 py-24 lg:px-16">
       <SectionHeading
         eyebrow="Kind words"
         title={["Loved by", "neighbours"]}
