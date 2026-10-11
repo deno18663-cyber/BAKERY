@@ -23,7 +23,7 @@ export default function SignatureProducts() {
   const items = filter === "all" ? PRODUCTS : PRODUCTS.filter((p) => p.category === filter);
 
   return (
-    <section id="products" className="relative bg-cream px-6 py-24 lg:px-16">
+    <section id="products" className="relative bg-warm-light-flip px-6 py-24 lg:px-16">
       <SectionHeading
         eyebrow="Signature bakes"
         title={["The counter,", "every morning"]}

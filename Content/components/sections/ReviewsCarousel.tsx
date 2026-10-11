@@ -74,7 +74,7 @@ export default function ReviewsCarousel() {
   }, [x, stepWidth, goTo]);
 
   return (
-    <section id="reviews" className="relative bg-vanilla px-6 py-24 lg:px-16">
+    <section id="reviews" className="relative bg-warm-vanilla-flip px-6 py-24 lg:px-16">
       <SectionHeading
         eyebrow="Kind words"
         title={["Loved by", "neighbours"]}

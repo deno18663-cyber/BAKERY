@@ -95,7 +95,7 @@ export default function StoreLocator() {
   }
 
   return (
-    <section id="visit" className="relative bg-cream px-6 py-24 lg:px-16">
+    <section id="visit" className="relative bg-warm-light-flip px-6 py-24 lg:px-16">
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
         {/* map */}
         <Reveal className="relative min-h-[22rem] overflow-hidden rounded-3xl border border-espresso/10 shadow-card">
