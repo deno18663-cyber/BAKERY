@@ -8,6 +8,7 @@ import type { ProductCategory } from "@/lib/types";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { miniConfetti } from "@/lib/confetti";
 import SectionHeading from "@/components/ui/SectionHeading";
+import WarmWash from "@/components/ui/WarmWash";
 
 const FILTERS: { key: ProductCategory | "all"; label: string }[] = [
   { key: "all", label: "All" },
@@ -24,6 +25,7 @@ export default function SignatureProducts() {
 
   return (
     <section id="products" className="relative bg-cream px-6 py-24 lg:px-16">
+      <WarmWash flip />
       <SectionHeading
         eyebrow="Signature bakes"
         title={["The counter,", "every morning"]}

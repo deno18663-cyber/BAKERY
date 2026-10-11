@@ -8,6 +8,7 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { bigConfetti } from "@/lib/confetti";
 import { BoxArt, CakeArt } from "@/components/three/Fallback2D";
 import SectionHeading from "@/components/ui/SectionHeading";
+import WarmWash from "@/components/ui/WarmWash";
 
 const STEPS = ["Base", "Frosting", "Toppings"];
 
@@ -56,6 +57,7 @@ export default function BuildCustomizer() {
 
   return (
     <section id="customizer" className="relative bg-transparent px-6 py-24 lg:px-16">
+      <WarmWash flip />
       <SectionHeading
         eyebrow="Build your own"
         title={["Make it", "exactly yours"]}

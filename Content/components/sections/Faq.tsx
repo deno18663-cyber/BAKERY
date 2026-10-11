@@ -2,6 +2,7 @@
 
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/ui/Reveal";
+import WarmWash from "@/components/ui/WarmWash";
 
 const FAQS: { q: string; a: string }[] = [
   {
@@ -44,6 +45,7 @@ export default function Faq() {
 
   return (
     <section id="faq" className="relative bg-cream px-6 py-24 lg:px-16">
+      <WarmWash flip />
       <script type="application/ld+json">{JSON.stringify(schema)}</script>
       <SectionHeading
         eyebrow="Good to know"
