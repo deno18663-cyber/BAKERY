@@ -96,33 +96,58 @@
 }
 
 /* ── Warm section backgrounds ────────────────────────────
-   Antique white (#faebd7) washing the top edge, bisque (#ffe4c4)
-   along the bottom — painted as the section's own background, so
-   nothing can cover them up. `-flip` mirrors the wash. */
+   Antique white (#faebd7) breathing in the upper third, bisque
+   (#ffe4c4) in the lower third. Crucially, every wash starts AND
+   ends on the section's own base color, so color always dissolves
+   before a section boundary — no visible seam lines, ever. */
 @utility bg-warm-light {
   background-color: var(--color-cream);
-  background-image:
-    radial-gradient(52rem 26rem at 12% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
-    radial-gradient(46rem 24rem at 88% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-cream) 0%,
+    rgb(250 235 215 / 0.9) 16%,
+    var(--color-cream) 42%,
+    var(--color-cream) 58%,
+    rgb(255 228 196 / 0.85) 84%,
+    var(--color-cream) 100%
+  );
 }
 
 @utility bg-warm-light-flip {
   background-color: var(--color-cream);
-  background-image:
-    radial-gradient(52rem 26rem at 88% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
-    radial-gradient(46rem 24rem at 12% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-cream) 0%,
+    rgb(250 235 215 / 0.9) 22%,
+    var(--color-cream) 48%,
+    var(--color-cream) 62%,
+    rgb(255 228 196 / 0.85) 88%,
+    var(--color-cream) 100%
+  );
 }
 
 @utility bg-warm-vanilla {
   background-color: var(--color-vanilla);
-  background-image:
-    radial-gradient(52rem 26rem at 12% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
-    radial-gradient(46rem 24rem at 88% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-vanilla) 0%,
+    rgb(250 235 215 / 0.9) 16%,
+    var(--color-vanilla) 42%,
+    var(--color-vanilla) 58%,
+    rgb(255 228 196 / 0.85) 84%,
+    var(--color-vanilla) 100%
+  );
 }
 
 @utility bg-warm-vanilla-flip {
   background-color: var(--color-vanilla);
-  background-image:
-    radial-gradient(52rem 26rem at 88% -8rem, rgb(250 235 215 / 0.95), transparent 70%),
-    radial-gradient(46rem 24rem at 12% 108%, rgb(255 228 196 / 0.9), transparent 70%);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-vanilla) 0%,
+    rgb(250 235 215 / 0.9) 22%,
+    var(--color-vanilla) 48%,
+    var(--color-vanilla) 62%,
+    rgb(255 228 196 / 0.85) 88%,
+    var(--color-vanilla) 100%
+  );
 }
