@@ -23,7 +23,7 @@ export default function MenuGrid() {
   const items = MENU.filter((m) => m.category === category);
 
   return (
-    <section id="menu" className="relative bg-warm-vanilla px-6 py-24 lg:px-16">
+    <section id="menu" className="relative bg-vanilla px-6 py-24 lg:px-16">
       <SectionHeading
         eyebrow="Full menu"
         title={["Everything", "we bake"]}

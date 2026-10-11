@@ -55,7 +55,7 @@ export default function BuildCustomizer() {
   const canBake = st.mode === "cake" || filledSlots === 6;
 
   return (
-    <section id="customizer" className="relative bg-warm-light-flip px-6 py-24 lg:px-16">
+    <section id="customizer" className="relative bg-transparent px-6 py-24 lg:px-16">
       <SectionHeading
         eyebrow="Build your own"
         title={["Make it", "exactly yours"]}

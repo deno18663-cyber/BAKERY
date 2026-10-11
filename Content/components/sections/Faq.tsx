@@ -43,7 +43,7 @@ export default function Faq() {
   };
 
   return (
-    <section id="faq" className="relative bg-warm-light px-6 py-24 lg:px-16">
+    <section id="faq" className="relative bg-cream px-6 py-24 lg:px-16">
       <script type="application/ld+json">{JSON.stringify(schema)}</script>
       <SectionHeading
         eyebrow="Good to know"

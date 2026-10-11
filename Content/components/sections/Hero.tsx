@@ -14,7 +14,7 @@ export default function Hero() {
   const enabled = useCapsStore((s) => s.enabled);
 
   return (
-    <section id="hero" className="relative flex min-h-screen items-center overflow-hidden bg-warm-light px-6 pb-24 pt-28 lg:px-16">
+    <section id="hero" className="relative flex min-h-screen items-center overflow-hidden px-6 pb-24 pt-28 lg:px-16">
       {!enabled && <FlourDust />}
 
       <div className="relative z-10 max-w-3xl">
