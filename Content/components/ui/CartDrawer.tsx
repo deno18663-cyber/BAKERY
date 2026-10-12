@@ -236,12 +236,12 @@ export default function CartDrawer() {
                       <input
                         type="tel"
                         value={loginPhone}
-                        onChange={(e) => setLoginPhone(e.target.value)}
+                        onChange={(e) => setLoginPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                         placeholder="10-digit mobile number"
                         aria-label="Phone number"
                         autoComplete="tel"
-                        inputMode="tel"
-                        maxLength={14}
+                        inputMode="numeric"
+                        maxLength={10}
                         className="w-full rounded-full border border-espresso/15 bg-cream px-5 py-2.5 text-sm outline-none transition-colors focus:border-golden"
                       />
                     </div>
