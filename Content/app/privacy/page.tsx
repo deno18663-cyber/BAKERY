@@ -14,7 +14,7 @@ const SECTIONS: { heading: string; body: string[] }[] = [
   {
     heading: "What we collect",
     body: [
-      "Orders: your name, an optional phone number, and what you ordered — so we can have it warm and ready for pickup.",
+      "Orders: your name and phone number, plus what you ordered — so we can have it warm and ready for pickup. Ordering requires signing in, so every order carries real contact details.",
       "Newsletter (“the proofing list”): just your email address, so we can send one email a week about what's baking.",
       "Reviews: the name, rating, and text you choose to share publicly on the site.",
       "Analytics: only if enabled — anonymous, aggregated visit statistics (see Cookies below). We never run ads and never sell data.",

@@ -19,8 +19,20 @@ function hashToken(token) {
   return crypto.createHash("sha256").update(String(token)).digest("hex");
 }
 
+/**
+ * India-only shop: customers sign in with a 10-digit Indian mobile number.
+ * Accepts "+91…" or "0…" prefixes and normalizes to the bare 10 digits.
+ * Valid mobiles start with 6–9.
+ */
 function cleanPhone(phone) {
-  return String(phone || "").replace(/[^\d]/g, "");
+  let digits = String(phone || "").replace(/[^\d]/g, "");
+  if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
+  else if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
+  return digits;
+}
+
+function validIndianMobile(digits) {
+  return /^[6-9]\d{9}$/.test(digits);
 }
 
 function validateIdentity({ name, email, phone }) {
@@ -31,8 +43,8 @@ function validateIdentity({ name, email, phone }) {
     return "A valid email address is required.";
   }
   const digits = cleanPhone(phone);
-  if (digits.length < 7 || digits.length > 15) {
-    return "A valid phone number is required (7–15 digits).";
+  if (!validIndianMobile(digits)) {
+    return "Enter a valid 10-digit Indian mobile number.";
   }
   return null;
 }

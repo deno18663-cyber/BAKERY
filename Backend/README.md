@@ -39,7 +39,7 @@ Config (optional): copy `.env.example` → `.env`
 | GET | `/api/orders?limit=` | default 20, max 100 | List orders (newest first) |
 | GET | `/api/orders/:id` | — | One order |
 | PATCH | `/api/orders/:id/status` | `{status: pending\|ready\|completed\|cancelled}` | Update order status |
-| POST | `/api/auth/login` | `{name, email, phone}` → `{token, customer}` | Passwordless customer sign-in (upsert by email) |
+| POST | `/api/auth/login` | `{name, email, phone}` → `{token, customer}` | Passwordless customer sign-in (upsert by email; 10-digit Indian mobile) |
 | GET | `/api/auth/me` | Bearer token | Validate session |
 | POST | `/api/auth/logout` | Bearer token | End session |
 | GET | `/api/customers` | staff-only (`ADMIN_KEY`) | Customer list with order counts |
