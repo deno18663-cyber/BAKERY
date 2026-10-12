@@ -14,6 +14,7 @@ interface CustomerState {
   token: string | null;
   customer: Customer | null;
   setSession: (token: string, customer: Customer) => void;
+  setCustomer: (customer: Customer) => void;
   clearSession: () => void;
 }
 
@@ -24,6 +25,7 @@ export const useCustomerStore = create<CustomerState>()(
       token: null,
       customer: null,
       setSession: (token, customer) => set({ token, customer }),
+      setCustomer: (customer) => set({ customer }),
       clearSession: () => set({ token: null, customer: null }),
     }),
     { name: "oven-customer" },

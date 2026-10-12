@@ -208,8 +208,25 @@ router.post("/custom", customerAuth, async (req, res) => {
 });
 
 // ── List / fetch / update status ──────────────────────────
-// Listing + status changes are staff-only. Single-order lookup stays
-// public (ids are unguessable) so customers could track their own order.
+// Listing + status changes are staff-only. "Mine" lets a signed-in
+// customer see their own orders. Single-order lookup stays public
+// (ids are unguessable) so a receipt link still works.
+router.get("/mine", customerAuth, (req, res) => {
+  const { orders } = db.get();
+  const mine = orders
+    .filter((o) => o.customerId === req.customer.id)
+    .slice(0, 20)
+    .map((o) => ({
+      id: o.id,
+      type: o.type,
+      lines: o.lines,
+      total: o.total,
+      status: o.status,
+      createdAt: o.createdAt,
+    }));
+  res.json({ count: mine.length, orders: mine });
+});
+
 router.get("/", adminAuth, (req, res) => {
   const { orders } = db.get();
   const limit = Math.min(Math.max(parseInt(req.query.limit || "20", 10) || 20, 1), 100);

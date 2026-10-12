@@ -120,4 +120,4 @@ async function logout(token) {
   });
 }
 
-module.exports = { login, logout, customerAuth, customerFromToken, publicCustomer };
+module.exports = { login, logout, customerAuth, customerFromToken, publicCustomer, validateIdentity, cleanPhone };

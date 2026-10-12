@@ -17,7 +17,9 @@
  *   PATCH /api/orders/:id/status          { status: pending|ready|completed|cancelled }
  *   POST /api/auth/login   { name, email, phone } → { token, customer }
  *   GET  /api/auth/me      (Bearer token) → { customer }
+ *   PATCH /api/auth/me     (Bearer token) { name, email, phone } → { customer }
  *   POST /api/auth/logout  (Bearer token)
+ *   GET  /api/orders/mine  (Bearer token) → own orders
  *   GET  /api/customers    (staff-only via ADMIN_KEY)
  *   GET  /api/reviews                    POST /api/reviews  { name, rating 1-5, text }
  *   POST /api/newsletter                 { email }           GET /api/newsletter

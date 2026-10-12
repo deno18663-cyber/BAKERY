@@ -61,6 +61,25 @@ export function logoutCustomer(token: string): Promise<{ ok: boolean }> {
   });
 }
 
+/** Edit own details — strictly validated server-side (email + 10-digit mobile). */
+export function updateMe(
+  token: string,
+  details: { name: string; email: string; phone: string },
+): Promise<{ customer: Customer }> {
+  return apiFetch("/api/auth/me", {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify(details),
+  });
+}
+
+/** Customer's own orders, newest first. */
+export function fetchMyOrders(token: string): Promise<{ count: number; orders: Order[] }> {
+  return apiFetch("/api/orders/mine", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
 /* ── Orders (login required) ────────────────────────────── */
 
 export interface OrderLineInput {

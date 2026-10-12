@@ -7,6 +7,7 @@ import { NAV_LINKS } from "@/lib/content";
 import { useCartStore } from "@/lib/stores/cart-store";
 import { useCustomerStore } from "@/lib/stores/customer-store";
 import LiveStatusPill from "@/components/ui/LiveStatusPill";
+import AccountDialog from "@/components/ui/AccountDialog";
 import Logo from "@/components/ui/Logo";
 import { scrollToTarget } from "@/components/smooth/SmoothScroll";
 
@@ -15,6 +16,7 @@ export default function Header() {
   const openCart = useCartStore((s) => s.openCart);
   const customer = useCustomerStore((s) => s.customer);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const badgeScale = useSpring(1, { stiffness: 320, damping: 18 });
 
   useEffect(() => {
@@ -62,8 +64,8 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <LiveStatusPill className="hidden md:inline-flex" />
             <button
-              onClick={openCart}
-              aria-label={customer ? `Account — signed in as ${customer.name}` : "Sign in to order"}
+              onClick={() => setAccountOpen(true)}
+              aria-label={customer ? `Account — signed in as ${customer.name}` : "Your account — sign in to order"}
               title={customer ? `Signed in as ${customer.name}` : "Sign in to order"}
               className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-transform hover:scale-105 ${
                 customer
@@ -142,6 +144,7 @@ export default function Header() {
           </>
         )}
       </AnimatePresence>
+      <AccountDialog open={accountOpen} onClose={() => setAccountOpen(false)} />
     </>
   );
 }
