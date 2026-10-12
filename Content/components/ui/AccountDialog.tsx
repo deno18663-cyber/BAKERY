@@ -124,11 +124,12 @@ export default function AccountDialog({ open, onClose }: { open: boolean; onClos
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
-          <motion.div
-            className="fixed left-1/2 top-1/2 z-[90] flex max-h-[85vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-3xl bg-cream shadow-2xl"
-            initial={{ opacity: 0, scale: 0.95, x: "-50%", y: "-48%" }}
-            animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
-            exit={{ opacity: 0, scale: 0.95, x: "-50%", y: "-48%" }}
+          <motion.aside
+            className="fixed right-0 top-0 z-[90] flex h-full w-full max-w-md flex-col bg-cream shadow-2xl"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
             role="dialog"
             aria-label="Your account"
           >
@@ -224,19 +225,13 @@ export default function AccountDialog({ open, onClose }: { open: boolean; onClos
                         </div>
                       </div>
                     ) : (
-                      <dl className="mt-3 space-y-1.5 text-sm">
-                        <div className="flex justify-between gap-4">
-                          <dt className="text-espresso/50">Name</dt>
-                          <dd className="font-semibold">{customer.name}</dd>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <dt className="text-espresso/50">Email</dt>
-                          <dd className="break-all font-semibold">{customer.email}</dd>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <dt className="text-espresso/50">Phone</dt>
-                          <dd className="font-semibold">+91 {customer.phone}</dd>
-                        </div>
+                      <dl className="mt-3 grid grid-cols-[64px_1fr] gap-x-4 gap-y-2 text-sm">
+                        <dt className="text-espresso/50">Name</dt>
+                        <dd className="font-semibold">{customer.name}</dd>
+                        <dt className="text-espresso/50">Email</dt>
+                        <dd className="break-all font-semibold">{customer.email}</dd>
+                        <dt className="text-espresso/50">Phone</dt>
+                        <dd className="font-semibold">+91 {customer.phone}</dd>
                       </dl>
                     )}
                   </div>
@@ -283,7 +278,7 @@ export default function AccountDialog({ open, onClose }: { open: boolean; onClos
                 </>
               )}
             </div>
-          </motion.div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>
