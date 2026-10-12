@@ -28,7 +28,19 @@ function readDb() {
     return initial;
   }
   const raw = fs.readFileSync(DB_FILE, "utf8");
-  return JSON.parse(raw);
+  const db = JSON.parse(raw);
+  // Migrate older databases: backfill collections added after first seed.
+  let migrated = false;
+  for (const key of ["orders", "subscribers", "customers", "sessions"]) {
+    if (!Array.isArray(db[key])) {
+      db[key] = [];
+      migrated = true;
+    }
+  }
+  if (migrated) {
+    writeDb(db);
+  }
+  return db;
 }
 
 function writeDb(db) {

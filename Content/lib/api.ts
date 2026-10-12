@@ -29,7 +29,39 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return data as T;
 }
 
-/* ── Orders ─────────────────────────────────────────────── */
+/* ── Customer auth (passwordless: name + email + phone) ─── */
+
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+}
+
+/** Sign in (or register) — returns a session token + customer. */
+export function loginCustomer(name: string, email: string, phone: string): Promise<{ token: string; customer: Customer }> {
+  return apiFetch("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ name, email, phone }),
+  });
+}
+
+/** Validate a stored token; throws ApiError(401) when expired. */
+export function fetchMe(token: string): Promise<{ customer: Customer }> {
+  return apiFetch("/api/auth/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+/** End the session server-side (local state is cleared by the caller). */
+export function logoutCustomer(token: string): Promise<{ ok: boolean }> {
+  return apiFetch("/api/auth/logout", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+/* ── Orders (login required) ────────────────────────────── */
 
 export interface OrderLineInput {
   id: string;
@@ -55,15 +87,13 @@ export interface Order {
   createdAt: string;
 }
 
-/** Real checkout — totals are computed server-side from the catalog. */
-export function createOrder(
-  items: OrderLineInput[],
-  customer: { name?: string; phone?: string },
-  note?: string,
-): Promise<Order> {
+/** Real checkout — login required. Totals are computed server-side
+ *  from the catalog and the customer is taken from the session. */
+export function createOrder(items: OrderLineInput[], token: string, note?: string): Promise<Order> {
   return apiFetch<Order>("/api/orders", {
     method: "POST",
-    body: JSON.stringify({ items, customer, note }),
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ items, note }),
   });
 }
 

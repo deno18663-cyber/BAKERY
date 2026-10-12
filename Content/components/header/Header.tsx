@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useSpring } from "framer-motion";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, User, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/content";
 import { useCartStore } from "@/lib/stores/cart-store";
+import { useCustomerStore } from "@/lib/stores/customer-store";
 import LiveStatusPill from "@/components/ui/LiveStatusPill";
 import Logo from "@/components/ui/Logo";
 import { scrollToTarget } from "@/components/smooth/SmoothScroll";
@@ -12,6 +13,7 @@ import { scrollToTarget } from "@/components/smooth/SmoothScroll";
 export default function Header() {
   const count = useCartStore((s) => s.items.reduce((n, i) => n + i.qty, 0));
   const openCart = useCartStore((s) => s.openCart);
+  const customer = useCustomerStore((s) => s.customer);
   const [menuOpen, setMenuOpen] = useState(false);
   const badgeScale = useSpring(1, { stiffness: 320, damping: 18 });
 
@@ -59,6 +61,18 @@ export default function Header() {
 
           <div className="flex items-center gap-3">
             <LiveStatusPill className="hidden md:inline-flex" />
+            <button
+              onClick={openCart}
+              aria-label={customer ? `Account — signed in as ${customer.name}` : "Sign in to order"}
+              title={customer ? `Signed in as ${customer.name}` : "Sign in to order"}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border shadow-sm transition-transform hover:scale-105 ${
+                customer
+                  ? "border-golden/60 bg-golden/15 font-display text-sm text-espresso"
+                  : "border-espresso/10 bg-cream text-espresso/60"
+              }`}
+            >
+              {customer ? customer.name.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
+            </button>
             <button
               onClick={openCart}
               aria-label="Open cart"

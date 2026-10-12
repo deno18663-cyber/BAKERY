@@ -120,6 +120,8 @@ function buildInitialDb() {
     schedule: SCHEDULE,
     orders: [],
     subscribers: [],
+    customers: [],
+    sessions: [],
   };
 }
 

@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCartStore } from "@/lib/stores/cart-store";
-import { createOrder, type Order } from "@/lib/api";
+import { useCustomerStore } from "@/lib/stores/customer-store";
+import { createOrder, fetchMe, loginCustomer, logoutCustomer, type Order } from "@/lib/api";
 import { miniConfetti } from "@/lib/confetti";
 
-/** Slide-over order tray with qty controls, real checkout, and a live subtotal. */
+/** Slide-over order tray — sign-in gate, qty controls, and live subtotal. */
 export default function CartDrawer() {
   const items = useCartStore((s) => s.items);
   const isOpen = useCartStore((s) => s.isOpen);
@@ -17,7 +18,14 @@ export default function CartDrawer() {
   const clear = useCartStore((s) => s.clear);
   const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
 
-  const [name, setName] = useState("");
+  const token = useCustomerStore((s) => s.token);
+  const customer = useCustomerStore((s) => s.customer);
+  const setSession = useCustomerStore((s) => s.setSession);
+  const clearSession = useCustomerStore((s) => s.clearSession);
+
+  const [loginName, setLoginName] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPhone, setLoginPhone] = useState("");
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [placed, setPlaced] = useState<Order | null>(null);
@@ -35,31 +43,57 @@ export default function CartDrawer() {
     if (isOpen) {
       setError(null);
       setPlaced(null);
+      // Drop expired sessions so the login form reappears.
+      if (token) {
+        fetchMe(token).catch(() => clearSession());
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, token, clearSession]);
 
-  /** Real checkout — POSTs the cart to the backend, which prices it server-side. */
-  async function checkout() {
+  /** Place the order with an authenticated session token. */
+  async function placeOrder(sessionToken: string) {
+    const order = await createOrder(
+      items.map((i) => ({ id: i.id, qty: i.qty, options: i.options })),
+      sessionToken,
+    );
+    miniConfetti();
+    clear();
+    setPlaced(order);
+  }
+
+  /** Sign in (validates email + phone server-side), then check out. */
+  async function signInAndCheckout() {
     if (placing || items.length === 0) return;
     setPlacing(true);
     setError(null);
     try {
-      const order = await createOrder(
-        items.map((i) => ({ id: i.id, qty: i.qty, options: i.options })),
-        { name: name.trim() || "Walk-in" },
-      );
-      miniConfetti();
-      clear();
-      setPlaced(order);
+      let sessionToken = token;
+      if (!sessionToken) {
+        const session = await loginCustomer(loginName.trim(), loginEmail.trim(), loginPhone.trim());
+        setSession(session.token, session.customer);
+        sessionToken = session.token;
+      }
+      await placeOrder(sessionToken);
     } catch (err) {
       setError(
         err instanceof Error
-          ? `${err.message} — couldn't reach the bakery server. Please retry in a moment.`
-          : "Checkout failed. Please retry.",
+          ? `${err.message} — please check your details and retry.`
+          : "Something went wrong. Please retry.",
       );
     } finally {
       setPlacing(false);
     }
+  }
+
+  async function signOut() {
+    if (token) {
+      try {
+        await logoutCustomer(token);
+      } catch {
+        // Session already dead server-side — just clear locally.
+      }
+    }
+    clearSession();
   }
 
   return (
@@ -167,17 +201,52 @@ export default function CartDrawer() {
                     <span className="text-sm text-espresso/60">Subtotal</span>
                     <span className="font-display text-2xl">${total.toFixed(2)}</span>
                   </div>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Name for pickup (optional)"
-                    aria-label="Name for pickup"
-                    className="mt-3 w-full rounded-full border border-espresso/15 bg-vanilla px-5 py-2.5 text-sm outline-none transition-colors focus:border-golden"
-                  />
+                  {customer && token ? (
+                    <div className="mt-3 flex items-center justify-between rounded-2xl bg-sage/10 px-4 py-2.5 text-sm">
+                      <span className="text-espresso/70">
+                        Ordering as <span className="font-semibold text-espresso">{customer.name}</span>
+                      </span>
+                      <button onClick={signOut} className="font-semibold text-terracotta hover:underline">
+                        Sign out
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-3 space-y-2 rounded-2xl border border-espresso/10 bg-vanilla p-3">
+                      <p className="px-1 text-xs font-semibold uppercase tracking-wide text-espresso/50">
+                        Sign in to order
+                      </p>
+                      <input
+                        type="text"
+                        value={loginName}
+                        onChange={(e) => setLoginName(e.target.value)}
+                        placeholder="Your name"
+                        aria-label="Your name"
+                        autoComplete="name"
+                        className="w-full rounded-full border border-espresso/15 bg-cream px-5 py-2.5 text-sm outline-none transition-colors focus:border-golden"
+                      />
+                      <input
+                        type="email"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="Email address"
+                        aria-label="Email address"
+                        autoComplete="email"
+                        className="w-full rounded-full border border-espresso/15 bg-cream px-5 py-2.5 text-sm outline-none transition-colors focus:border-golden"
+                      />
+                      <input
+                        type="tel"
+                        value={loginPhone}
+                        onChange={(e) => setLoginPhone(e.target.value)}
+                        placeholder="Phone number"
+                        aria-label="Phone number"
+                        autoComplete="tel"
+                        className="w-full rounded-full border border-espresso/15 bg-cream px-5 py-2.5 text-sm outline-none transition-colors focus:border-golden"
+                      />
+                    </div>
+                  )}
                   {error && <p className="mt-2 text-xs leading-relaxed text-terracotta">{error}</p>}
                   <button
-                    onClick={checkout}
+                    onClick={signInAndCheckout}
                     disabled={placing}
                     className="mt-3 w-full rounded-full bg-cinnamon py-4 text-sm font-bold text-cream transition-colors hover:bg-terracotta disabled:cursor-wait disabled:opacity-60"
                   >

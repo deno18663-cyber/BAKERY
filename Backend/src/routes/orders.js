@@ -12,6 +12,7 @@
 const express = require("express");
 const db = require("../db");
 const adminAuth = require("../admin-auth");
+const { customerAuth } = require("../auth");
 
 const router = express.Router();
 
@@ -71,8 +72,11 @@ function validateItems(catalog, items) {
 }
 
 // ── Create a standard order ───────────────────────────────
-router.post("/", async (req, res) => {
-  const { items, customer = {}, note } = req.body || {};
+// Login required — the customer is taken from the session, never
+// from the request body, so orders can't be placed anonymously.
+router.post("/", customerAuth, async (req, res) => {
+  const { items, note } = req.body || {};
+  const customer = req.customer;
 
   const order = await db.update((database) => {
     const catalog = priceMap(database);
@@ -91,9 +95,11 @@ router.post("/", async (req, res) => {
       subtotal,
       total: subtotal,
       currency: "USD",
+      customerId: customer.id,
       customer: {
-        name: typeof customer.name === "string" ? customer.name.trim().slice(0, 80) : "",
-        phone: typeof customer.phone === "string" ? customer.phone.slice(0, 40) : undefined,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
       },
       note: typeof note === "string" ? note.slice(0, 500) : undefined,
       status: "pending",
@@ -110,14 +116,13 @@ router.post("/", async (req, res) => {
 });
 
 // ── Create a custom cake / bake-box order ─────────────────
-router.post("/custom", async (req, res) => {
+// Login required — same session customer as standard orders.
+router.post("/custom", customerAuth, async (req, res) => {
   const body = req.body || {};
-  const { kind, customer = {}, message } = body;
+  const { kind, message } = body;
+  const customer = req.customer;
   if (kind !== "cake" && kind !== "box") {
     return res.status(400).json({ error: "kind must be 'cake' or 'box'" });
-  }
-  if (customer && typeof customer.name === "string" && customer.name.length > 80) {
-    return res.status(400).json({ error: "customer name is too long (max 80 chars)." });
   }
 
   const order = await db.update((database) => {
@@ -181,9 +186,11 @@ router.post("/custom", async (req, res) => {
       subtotal,
       total: subtotal,
       currency: "USD",
+      customerId: customer.id,
       customer: {
-        name: typeof customer.name === "string" ? customer.name.trim().slice(0, 80) : "",
-        phone: typeof customer.phone === "string" ? customer.phone.slice(0, 40) : undefined,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
       },
       message: typeof message === "string" ? message.slice(0, 300) : undefined,
       spec: kind === "cake" ? { base: body.base, frosting: body.frosting, toppings: body.toppings || [] } : { slots: body.slots },

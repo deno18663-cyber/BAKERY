@@ -11,11 +11,14 @@
  *   GET  /api/products[?category=]        GET /api/products/:id
  *   GET  /api/menu[?category=&search=]    GET /api/menu/:id
  *   GET  /api/customizer
- *   POST /api/orders                     { items: [{id, qty, options?}], customer: {name, phone?}, note? }
- *   POST /api/orders/custom              { kind:'cake', base, frosting, toppings[], customer, message? }
- *                                        { kind:'box', slots:[6 ids], customer, message? }
+ *   POST /api/orders                     (login required — customer from session)
+ *   POST /api/orders/custom              (login required)
  *   GET  /api/orders[?limit=]             GET /api/orders/:id
  *   PATCH /api/orders/:id/status          { status: pending|ready|completed|cancelled }
+ *   POST /api/auth/login   { name, email, phone } → { token, customer }
+ *   GET  /api/auth/me      (Bearer token) → { customer }
+ *   POST /api/auth/logout  (Bearer token)
+ *   GET  /api/customers    (staff-only via ADMIN_KEY)
  *   GET  /api/reviews                    POST /api/reviews  { name, rating 1-5, text }
  *   POST /api/newsletter                 { email }           GET /api/newsletter
  *   GET  /api/store-info/store | /hours | /schedule[?at=ISO]
@@ -35,6 +38,7 @@ const ordersRouter = require("./routes/orders");
 const reviewsRouter = require("./routes/reviews");
 const newsletterRouter = require("./routes/newsletter");
 const storeRouter = require("./routes/store");
+const { router: authRouter, customersRouter } = require("./routes/auth");
 
 const PORT = Number(process.env.PORT || 4000);
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
@@ -99,6 +103,8 @@ app.use("/api/products", productsRouter);
 app.use("/api/menu", menuRouter);
 app.use("/api/customizer", customizerRouter);
 app.use("/api/orders", ordersRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/customers", customersRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/api/newsletter", newsletterRouter);
 // Backwards-friendly alias: the signup form posts an email.

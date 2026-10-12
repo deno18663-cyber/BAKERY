@@ -34,11 +34,15 @@ Config (optional): copy `.env.example` → `.env`
 | GET | `/api/menu?category=&search=` | filter + free-text search | Full menu |
 | GET | `/api/menu/:id` | — | One menu item |
 | GET | `/api/customizer` | — | Cake/box builder options + prices |
-| POST | `/api/orders` | `{ items:[{id, qty, options?}], customer:{name, phone?}, note? }` | **Checkout** — totals computed server-side |
-| POST | `/api/orders/custom` | cake: `{kind:'cake', base, frosting, toppings[], customer, message?}` · box: `{kind:'box', slots:[6 ids], customer, message?}` | Custom cake / bake-box order |
+| POST | `/api/orders` | login required (Bearer token); `{ items:[{id, qty, options?}], note? }` — customer taken from session | **Checkout** — totals computed server-side |
+| POST | `/api/orders/custom` | login required; cake: `{kind:'cake', base, frosting, toppings[], message?}` · box: `{kind:'box', slots:[6 ids], message?}` | Custom cake / bake-box order |
 | GET | `/api/orders?limit=` | default 20, max 100 | List orders (newest first) |
 | GET | `/api/orders/:id` | — | One order |
 | PATCH | `/api/orders/:id/status` | `{status: pending\|ready\|completed\|cancelled}` | Update order status |
+| POST | `/api/auth/login` | `{name, email, phone}` → `{token, customer}` | Passwordless customer sign-in (upsert by email) |
+| GET | `/api/auth/me` | Bearer token | Validate session |
+| POST | `/api/auth/logout` | Bearer token | End session |
+| GET | `/api/customers` | staff-only (`ADMIN_KEY`) | Customer list with order counts |
 | GET/POST | `/api/reviews` | POST `{name, rating 1-5, text}` | Reviews carousel data |
 | GET/POST | `/api/newsletter` (alias `/api/subscribe`) | POST `{email}` | "Proofing list" signup |
 | GET | `/api/store-info/store` · `/hours` · `/schedule` | `/schedule?at=ISO` to override clock | Store info, hours, live bake phases |
